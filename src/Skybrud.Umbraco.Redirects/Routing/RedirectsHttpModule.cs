@@ -7,6 +7,10 @@ using Umbraco.Web.Routing;
 using System.Text.RegularExpressions;
 using System.Collections.Specialized;
 using Skybrud.Umbraco.Redirects.Extensions;
+using System.Linq;
+using System.Net.Mime;
+using Skybrud.Umbraco.Redirects.Utilities;
+using System.Configuration;
 
 namespace Skybrud.Umbraco.Redirects.Routing {
 
@@ -48,22 +52,33 @@ namespace Skybrud.Umbraco.Redirects.Routing {
 
             HttpApplication application = (HttpApplication) sender;
 
-            // Ignore if not a 404 response
-            if (application.Response.StatusCode != 404) return;
-            
-            // Get the Umbraco domain of the current request
-            IDomain domain = GetUmbracoDomain();
-
-            // Get the root node/content ID of the domain (no domain = 0)
-            int rootNodeId = (domain == null || domain.RootContentId == null ? 0 : domain.RootContentId.Value);
-
-            // Look for a redirect matching the URL (and domain)
             RedirectItem redirect = null;
-            if (rootNodeId > 0) redirect = Repository.GetRedirectByUrl(rootNodeId, Request.RawUrl);
-            redirect = redirect ?? Repository.GetRedirectByUrl(0, Request.RawUrl);
+
+            // Ignore if not a 404 response
+            if (application.Response.StatusCode != 404 && application.Response.ContentType == MediaTypeNames.Text.Html)
+            {
+                var lstRedirects = CacheManager.Get("GetAllRedirects", () => Repository.GetRedirects());
+
+                if (lstRedirects == null) return;
+                
+                redirect = lstRedirects.Items.FirstOrDefault(r => r.Url.ToLower().Equals(Request.RawUrl.ToLower()));
+            }
+            else
+            {
+                // Get the Umbraco domain of the current request
+                IDomain domain = GetUmbracoDomain();
+
+                // Get the root node/content ID of the domain (no domain = 0)
+                int rootNodeId = (domain == null || domain.RootContentId == null ? 0 : domain.RootContentId.Value);
+
+                // Look for a redirect matching the URL (and domain)
+                if (rootNodeId > 0) redirect = Repository.GetRedirectByUrl(rootNodeId, Request.RawUrl);
+                redirect = redirect ?? Repository.GetRedirectByUrl(0, Request.RawUrl);
+            }
+
             if (redirect == null) return;
 
-			var redirectUrl = redirect.LinkUrl;
+            var redirectUrl = redirect.LinkUrl;
             
             if (redirect.ForwardQueryString) {
                 
@@ -97,7 +112,6 @@ namespace Skybrud.Umbraco.Redirects.Routing {
             } else {
                 Response.Redirect(redirectUrl);
             }
-
         }
 
         public void Dispose() { }
