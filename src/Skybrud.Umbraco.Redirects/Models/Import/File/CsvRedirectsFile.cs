@@ -98,7 +98,7 @@ namespace Skybrud.Umbraco.Redirects.Models.Import.File
 
                 redirectItemRow.Url = sourceUrlNoTrailingSlash;
 
-                redirectItemRow.QueryString = sourceUrl.Query;
+                redirectItemRow.QueryString = sourceUrl.Query.TrimStart('?');
             }
 
             var destinationUrlRaw = row.Cells[1] == null ? null : row.Cells[1].Value.Replace("\"", string.Empty).Trim();

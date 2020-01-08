@@ -301,7 +301,7 @@ namespace Skybrud.Umbraco.Redirects.Controllers.Api {
             var path = file.LocalFileName;
             var ext = path.Substring(path.LastIndexOf('.')).ToLower();
 
-            if (ext != ".csv" && ext != ".xlst")
+            if (ext != ".csv" && ext != ".xlsx")
             {
                 throw new HttpResponseException(new HttpResponseMessage
                 {

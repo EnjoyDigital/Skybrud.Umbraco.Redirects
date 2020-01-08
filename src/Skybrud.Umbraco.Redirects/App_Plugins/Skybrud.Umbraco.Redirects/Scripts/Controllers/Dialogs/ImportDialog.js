@@ -171,7 +171,7 @@
 
                     linkElement.dispatchEvent(clickEvent);
 
-                    $rootScope.updateList(1);
+                    //$rootScope.updateList(1);
                 } catch (ex) {
                     console.log(ex);
                 }

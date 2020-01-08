@@ -25,8 +25,8 @@ namespace Skybrud.Umbraco.Redirects.Models.Import
             var redirectChainValidator = new RedirectChainValidator();
             destinationUrlValidator.SetSuccessor(redirectChainValidator);
 
-            var duplicateValidator = new DuplicateSourceUrlValidator();
-            redirectChainValidator.SetSuccessor(duplicateValidator);
+            //var duplicateValidator = new DuplicateSourceUrlValidator();
+            //redirectChainValidator.SetSuccessor(duplicateValidator);
 
             var results = sourceUrlValidator.HandleValidation(model, otherRedirectItems);
 

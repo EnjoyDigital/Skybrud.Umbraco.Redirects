@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Skybrud.Umbraco.Redirects")]
-[assembly: AssemblyDescription("Skybrud.Umbraco.Redirects is a package to handle 301 redirects in Umbraco.")]
+[assembly: AssemblyTitle("EdSkybrud.Umbraco.Redirects")]
+[assembly: AssemblyDescription("EdSkybrud.Umbraco.Redirects is a package to handle 301 redirects in Umbraco.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Skybrud.dk")]
 [assembly: AssemblyProduct("Skybrud.Umbraco.Redirects")]
