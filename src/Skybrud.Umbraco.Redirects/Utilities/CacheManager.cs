@@ -9,7 +9,7 @@ namespace Skybrud.Umbraco.Redirects.Utilities
         {
             ObjectCache cache = MemoryCache.Default;
 
-            cache.Set(key, value, DateTime.Now.AddDays(1));
+            cache.Set(key, value, DateTime.Now.AddHours(1));
         }
         
         /// <summary>
@@ -33,7 +33,7 @@ namespace Skybrud.Umbraco.Redirects.Utilities
 
             if (cache[key] == null)
             {
-                cache.Set(key, value, DateTime.Now.AddDays(1));
+                cache.Set(key, value, DateTime.Now.AddHours(1));
             }
 
             return (T)cache[key];
@@ -51,7 +51,7 @@ namespace Skybrud.Umbraco.Redirects.Utilities
             {
                 var val = getValue();
 
-                cache.Set(key, val, DateTime.Now.AddDays(1));
+                cache.Set(key, val, DateTime.Now.AddHours(1));
             }
 
             return (T)cache[key];
