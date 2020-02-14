@@ -7,8 +7,6 @@
   <area alias="redirects">
     <key alias="redirects">Redirects</key>
     <key alias="addNewRedirect">Tilføj nyt redirect</key>
-    <key alias="reload">Genindlæs</key>
-    <key alias="import">Import</key>
     <key alias="addRedirect">Tilføj redirect</key>
     <key alias="editRedirect">Rediger redirect</key>
     <key alias="saveRedirect">Gem redirect</key>

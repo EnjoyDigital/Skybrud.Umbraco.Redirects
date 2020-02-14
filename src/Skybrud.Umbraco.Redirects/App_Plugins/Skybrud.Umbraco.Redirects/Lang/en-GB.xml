@@ -12,7 +12,6 @@
     <key alias="saveRedirect">Save redirect</key>
     <key alias="cancel">Cancel</key>
     <key alias="reload">Reload</key>
-    <key alias="import">Import</key>
     <key alias="edit">Edit</key>
     <key alias="delete">Delete</key>
     <key alias="content">Content</key>

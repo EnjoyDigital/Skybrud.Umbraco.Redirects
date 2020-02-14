@@ -1,8 +1,0 @@
-﻿Source,Destination,Type
-http://skybrudtest.dev.local/source1,http://skybrudtest.dev.local/destination1?a=1&b=2,url
-http://skybrudtest.dev.local/source2?a=1&b=2,http://skybrudtest.dev.local/destination2?a=1&b=2,url
-http://skybrudtest.dev.local/ollienewpage,http://skybrudtest.dev.local/ollieoldpag
-http://skybrudtest.dev.local/good,http://skybrudtest.dev.local/new
-
-http://skybrudtest.dev.local/good3,http://skybrudtest.dev.local/new3
-http://skybrudtest.dev.local/good4,http://skybrudtest.dev.local/new4
