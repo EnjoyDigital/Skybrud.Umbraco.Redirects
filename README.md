@@ -1,19 +1,56 @@
 Skybrud.Umbraco.Redirects
 =========================
 
-This package features a dashboard and property editor that let's users manage inbound redirects from within the Umbraco backoffice.
+[Looking for the Umbraco 7 version of the package?](https://github.com/skybrud/Skybrud.Umbraco.Redirects/tree/dev-v7)
+
+**Skybrud.Umbraco.Redirects** is a redirects manager for Umbraco 8. The package features a dashboard and property editor that let's users manage inbound redirects from within the Umbraco backoffice.
 
 URLs can be added to redirect to either a content item, media item or a custom URL.
 
-![image](https://cloud.githubusercontent.com/assets/3634580/22441437/ac65dc6e-e737-11e6-8a5c-e89a46aea3a1.png)
-
 ## Installation
 
-1. [**NuGet Package**][NuGetPackage]  
-Install this NuGet package in your Visual Studio project. Makes updating easy.
+### Install via NuGet
+This is the recommend approach, as you install the [**NuGet Package**][NuGetPackage] in your Visual Studio project, and NuGet takes care of the rest.
 
-1. [**ZIP file**][GitHubRelease]  
-Grab a ZIP file of the latest release; unzip and move the contents to the root directory of your web application.
+**Umbraco 8**  
+Latest release for Umbraco 8 is [**v2.0.2**](https://github.com/skybrud/Skybrud.Umbraco.Redirects/releases/tag/v2.0.0):
+
+```
+Install-Package Skybrud.Umbraco.Redirects -Version 2.0.2
+```
+
+**Umbraco 7**  
+Latest release for Umbraco 7 is [**v0.3.5**](https://github.com/skybrud/Skybrud.Umbraco.Redirects/releases/tag/v0.3.5):
+
+```
+Install-Package Skybrud.Umbraco.Redirects -Version 0.3.5
+```
+
+### Manual install
+You can also download a ZIP file of the latest release directly from GitHub, unzip, and move the contents to the root directory of your web application.
+
+1. [**Download ZIP file**][GitHubRelease]  
+  Download the ZIP file directly from here on GitHub. The ZIP contains all necessary files to run the package.
+
+2. **Unzip**  
+  Unzip and move the contents to the root directory of your web application.
+
+3. **Install HTTP module**  
+  The package features a HTTP module. When downloading the ZIP file, you must install this manually. In your root `Web.config` file, search for the `<system.webServer>` element. Then add the following to the `<modules>` child element:
+  
+     ```xml
+    <remove name="RedirectsModule" />
+    <add name="RedirectsModule" type="Skybrud.Umbraco.Redirects.Routing.RedirectsModule, Skybrud.Umbraco.Redirects" />
+    ```
+
+    The order shouldn't matter that much, but we typically add it right after:
+
+    ```xml
+    <remove name="UmbracoModule" />
+    <add name="UmbracoModule" type="Umbraco.Web.UmbracoModule,umbraco" />
+    ```
+
+
 
 ## Features
 
@@ -26,70 +63,9 @@ Grab a ZIP file of the latest release; unzip and move the contents to the root d
 - Includes a `RedirectsRepository` for managing the redirects from your own code
 
 [NuGetPackage]: https://www.nuget.org/packages/Skybrud.Umbraco.Redirects
-[GitHubRelease]: https://github.com/skybrud/Skybrud.Umbraco.Redirects
+[GitHubRelease]: https://github.com/skybrud/Skybrud.Umbraco.Redirects/releases
 
-## Configuration
 
-#### Adding the HTTP module to Web.config
-
-In order to handle the redirects, this package comes with a HTTP module - which for now must be added manuelly to `Web.config`. In your `Web.config`, search for the `<system.webServer>` element. Then add the following to the `<modules>` child element.
-
-```xml
-<remove name="RedirectsHttpModule" />
-<add name="RedirectsHttpModule" type="Skybrud.Umbraco.Redirects.Routing.RedirectsHttpModule, Skybrud.Umbraco.Redirects" />
-```
-
-The order shouldn't matter that much, but we typically add it right after:
-
-```xml
-<remove name="UmbracoModule" />
-<add name="UmbracoModule" type="Umbraco.Web.UmbracoModule,umbraco" />
-```
-
-In a standard Umbraco 7.5, the entire `<modules>` element would then look like:
-
-```xml
-<modules runAllManagedModulesForAllRequests="true">
-	<remove name="WebDAVModule" />
-
-	<remove name="UrlRewriteModule" />
-	<add name="UrlRewriteModule" type="UrlRewritingNet.Web.UrlRewriteModule, UrlRewritingNet.UrlRewriter" />
-
-	<remove name="UmbracoModule" />
-	<add name="UmbracoModule" type="Umbraco.Web.UmbracoModule,umbraco" />
-
-	<remove name="RedirectsHttpModule" />
-	<add name="RedirectsHttpModule" type="Skybrud.Umbraco.Redirects.Routing.RedirectsHttpModule, Skybrud.Umbraco.Redirects" />
-
-	<remove name="ScriptModule" />
-	<add name="ScriptModule" preCondition="managedHandler" type="System.Web.Handlers.ScriptModule, System.Web.Extensions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35" />
-
-	<remove name="ClientDependencyModule" />
-	<add name="ClientDependencyModule" type="ClientDependency.Core.Module.ClientDependencyModule, ClientDependency.Core" />
-
-	<!-- Needed for login/membership to work on homepage (as per http://stackoverflow.com/questions/218057/httpcontext-current-session-is-null-when-routing-requests) -->
-	<remove name="FormsAuthentication" />
-	<add name="FormsAuthentication" type="System.Web.Security.FormsAuthenticationModule" />
-	<add name="ImageProcessorModule" type="ImageProcessor.Web.HttpModules.ImageProcessingModule, ImageProcessor.Web" />
-</modules>
-```
-
-#### Adding a Redirects tab to the Content dashboard
-
-This step is optional, but if you wish to show redirects at a global level, you can add a *Redirects* tab to the dashboard of the *Content* section. To do this, open up `~/Config/Dashboard.config`, and search for the line with `<section alias="StartupDashboardSection">`. This particular `<section>` element describes the tabs of the *Content* section. THe *Redirects* tab can be added by adding the following XML as a child element:
-
-```xml
-<tab caption="Redirects">
-	<access>
-		<grant>admin</grant>
-	</access>
-	<control showOnce="true" addPanel="true" panelCaption="">/App_Plugins/Skybrud.Umbraco.Redirects/Views/Dashboard.html</control>
-</tab>
-```
-
-With the example above, the tab will only be visible to admins. If you remove the `<access>` element, all your users will be able to see the tab.
-
-The dashboard will list all redirects - for content, media and custom URLs.
 
 ## Screenshots
 

@@ -5,27 +5,42 @@ using Skybrud.Essentials.Json.Extensions;
 
 namespace Skybrud.Umbraco.Redirects.Models.Outbound {
     
-    public class OutboundRedirect {
+    /// <summary>
+    /// Model for an outbound redirect.
+    /// </summary>
+    public class OutboundRedirect : JsonObjectBase {
 
         #region Properties
-
-        [JsonIgnore]
-        public JObject JObject { get; }
-
+        
+        /// <summary>
+        /// Gets whether the redirect is permanent.
+        /// </summary>
         [JsonProperty("permanent")]
         public bool IsPermanent { get; }
 
+        /// <summary>
+        /// Gets an instance of <see cref="RedirectDestination"/> representing the destination.
+        /// </summary>
         [JsonProperty("link")]
-        public RedirectLinkItem Link { get; }
+        public RedirectDestination Link { get; }
 
+        /// <summary>
+        /// Gets the URL of the redirects.
+        /// </summary>
         [JsonIgnore]
-        public string Url => HasLink ? Link.Url : "";
+        public string Url => HasLink ? Link.Url : string.Empty;
 
+        /// <summary>
+        /// Same as <see cref="IsValid"/>.
+        /// </summary>
         [JsonIgnore]
-        public bool HasLink => Link != null && Link.IsValid;
+        public bool HasLink => IsValid;
 
+        /// <summary>
+        /// Gets whether the redirects has a valid link.
+        /// </summary>
         [JsonIgnore]
-        public bool IsValid => HasLink;
+        public bool IsValid => Link != null && Link.IsValid;
 
         #endregion
 
@@ -34,19 +49,18 @@ namespace Skybrud.Umbraco.Redirects.Models.Outbound {
         /// <summary>
         /// Initializes a new instance with an empty model.
         /// </summary>
-        public OutboundRedirect() {
+        public OutboundRedirect() : base(null) {
             IsPermanent = true;
-            Link = new RedirectLinkItem();
+            Link = new RedirectDestination();
         }
 
         /// <summary>
         /// Initializes a new instance based on the specified <see cref="JObject"/>.
         /// </summary>
         /// <param name="obj">An instance of <see cref="JObject"/> representing the redirect.</param>
-        protected OutboundRedirect(JObject obj) {
-            JObject = obj;
+        protected OutboundRedirect(JObject obj) : base(obj) {
             IsPermanent = obj.GetBoolean("permanent");
-            Link = obj.GetObject(obj.HasValue("items") ? "items.items[0]" : "link", RedirectLinkItem.Parse) ?? new RedirectLinkItem();
+            Link = obj.GetObject(obj.HasValue("items") ? "items.items[0]" : "link", RedirectDestination.Parse) ?? new RedirectDestination();
         }
 
         #endregion
@@ -57,7 +71,7 @@ namespace Skybrud.Umbraco.Redirects.Models.Outbound {
         /// Parses the specified <see cref="JObject"/> into an instance of <see cref="OutboundRedirect"/>.
         /// </summary>
         /// <param name="obj">An instance of <see cref="JObject"/> representing the redirect.</param>
-        /// <returns>An instacne of <see cref="OutboundRedirect"/>, or <code>null</code> if <code>obj</code> is <code>null</code>.</returns>
+        /// <returns>An instacne of <see cref="OutboundRedirect"/>, or <c>null</c> if <paramref name="obj"/> is <c>null</c>.</returns>
         public static OutboundRedirect Parse(JObject obj) {
             return obj == null ? null : new OutboundRedirect(obj);
         }

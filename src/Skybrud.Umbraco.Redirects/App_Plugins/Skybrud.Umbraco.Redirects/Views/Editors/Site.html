@@ -1,0 +1,6 @@
+﻿<div class="SkybrudUmbracoRedirects RedirectsRootId" ng-controller="SkybrudUmbracoRedirects.Editors.Site.Controller">
+    <div ng-class="{loading: loading}">
+        <umb-load-indicator></umb-load-indicator>
+        <select ng-options="item.id as item.name for item in rootNodes" ng-model="model.value" ng-disabled="loading"></select>
+    </div>
+</div>

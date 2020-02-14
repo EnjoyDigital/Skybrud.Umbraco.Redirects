@@ -1,61 +1,72 @@
-﻿angular.module('umbraco.services').factory('skybrudRedirectsService', function ($http, dialogService, notificationsService) {
+﻿angular.module('umbraco.services').factory('skybrudRedirectsService', function ($http, editorService, notificationsService) {
 
     var service = {
 
         parseUmbracoLink: function (e) {
+
+            var key = "00000000-0000-0000-0000-000000000000";
+            var type = "url";
+
+            if (e.udi) {
+                key = e.udi.split("/")[3];
+                type = e.udi.split("/")[2];
+            }
+
             return {
                 id: e.id || 0,
-                name: e.name || '',
+                key: key,
                 url: e.url,
-                target: e.target || '_self',
-                mode: (e.id ? (e.isMedia ? 'media' : 'content') : 'url')
+                name: e.name,
+                type: type === "document" ? "content" : type
             };
+
         },
 
-        addLink: function (callback, closeAllDialogs) {
-            closeAllDialogs = closeAllDialogs !== false;
-            if (closeAllDialogs) dialogService.closeAll();
-            dialogService.linkPicker({
-                callback: function (e) {
-                    if (!e.id && !e.url && !confirm('The selected link appears to be empty. Do you want to continue anyways?')) return;
-                    if (callback) callback(service.parseUmbracoLink(e));
-                    if (closeAllDialogs) dialogService.closeAll();
+        addLink: function (callback) {
+            editorService.linkPicker({
+                submit: function (e) {
+                    if (!e.id && !e.url && !confirm("The selected link appears to be empty. Do you want to continue anyways?")) return;
+                    if (callback) callback(e);
+                    editorService.close();
+                },
+                close: function () {
+                    editorService.close();
                 }
             });
         },
 
         editLink: function (link, callback, closeAllDialogs) {
             closeAllDialogs = closeAllDialogs !== false;
-            if (closeAllDialogs) dialogService.closeAll();
+            if (closeAllDialogs) editorService.closeAll();
             if (link.mode == 'media') {
-                dialogService.linkPicker({
+                editorService.linkPicker({
                     currentTarget: {
                         name: link.name,
                         url: link.url,
                         target: link.target
                     },
-                    callback: function (e) {
+                    submit: function (e) {
                         if (!e.id && !e.url && !confirm('The selected link appears to be empty. Do you want to continue anyways?')) return;
                         if (service.parseUmbracoLink(e).id == 0) {
                             e.id = link.id;
                             e.isMedia = true;
                         }
                         if (callback) callback(service.parseUmbracoLink(e));
-                        if (closeAllDialogs) dialogService.closeAll();
+                        if (closeAllDialogs) editorService.closeAll();
                     }
                 });
             } else {
-                dialogService.linkPicker({
+                editorService.linkPicker({
                     currentTarget: {
                         id: link.id,
                         name: link.name,
                         url: link.url,
                         target: link.target
                     },
-                    callback: function (e) {
+                    submit: function (e) {
                         if (!e.id && !e.url && !confirm('The selected link appears to be empty. Do you want to continue anyways?')) return;
                         if (callback) callback(service.parseUmbracoLink(e));
-                        if (closeAllDialogs) dialogService.closeAll();
+                        if (closeAllDialogs) editorService.closeAll();
                     }
                 });
             }
@@ -64,54 +75,60 @@
         addRedirect: function (options) {
 
             if (!options) options = {};
-            if (typeof (options) == 'function') options = { callback: options };
+            if (typeof options === "function") options = { callback: options };
 
-            var d = dialogService.open({
-                template: '/App_Plugins/Skybrud.Umbraco.Redirects/Views/Dialogs/Add.html',
-                show: true,
+            var o = {
+                size: "small",
+                view: "/App_Plugins/Skybrud.Umbraco.Redirects/Views/Dialogs/Redirect.html",
                 options: options,
-                callback: function (value) {
+                submit: function(value) {
                     if (options.callback) options.callback(value);
+                    editorService.close();
+                },
+                close: function() {
+                    editorService.close();
                 }
-            });
+            };
 
-            // Make the dialog 20px wider than default so it can be seen bhind the linkpicker dialog
-            d.element[0].style = 'display: flex; width: 460px !important; margin-left: -460px';
+            if (options.destination) o.destination = options.destination;
+
+            editorService.open(o);
 
         },
-        
+
         editRedirect: function (redirect, options) {
 
             if (!options) options = {};
-            if (typeof (options) == 'function') options = { callback: options };
-            
-            var d = dialogService.open({
-                template: '/App_Plugins/Skybrud.Umbraco.Redirects/Views/Dialogs/Edit.html',
-                show: true,
+            if (typeof options === "function") options = { callback: options };
+
+            editorService.open({
+	            size: "small",
+                view: "/App_Plugins/Skybrud.Umbraco.Redirects/Views/Dialogs/Redirect.html",
                 redirect: redirect,
                 options: options,
-                callback: function (value) {
+                submit: function (value) {
                     if (options.callback) options.callback(value);
+                    editorService.close();
+                },
+                close: function () {
+                    editorService.close();
                 }
             });
-
-            // Make the dialog 20px wider than default so it can be seen bhind the linkpicker dialog
-            d.element[0].style = 'display: flex; width: 460px !important; margin-left: -460px';
 
         },
 
         deleteRedirect: function (redirect, callback) {
             $http({
-                method: 'GET',
-                url: '/umbraco/backoffice/api/Redirects/DeleteRedirect',
+                method: "GET",
+                url: "/umbraco/backoffice/Skybrud/Redirects/DeleteRedirect",
                 params: {
-                    redirectId: redirect.uniqueId
+                    redirectId: redirect.key
                 }
-            }).success(function () {
-                notificationsService.success('Redirect deleted', 'Your redirect was successfully deleted.');
+            }).then(function () {
+                notificationsService.success("Redirect deleted", "Your redirect was successfully deleted.");
                 if (callback) callback(redirect);
-            }).error(function (res) {
-                notificationsService.error('Deleting redirect failed', res && res.meta ? res.meta.error : 'The server was unable to delete your redirect.');
+            }, function (res) {
+                notificationsService.error("Deleting redirect failed", res && res.data && res.data.meta ? res.data.meta.error : "The server was unable to delete your redirect.");
             });
         },
 
@@ -146,17 +163,29 @@
         isValidUrl: function(url, isRegex) {
 
             // Make sure we have a string and trim all leading and trailing whitespace
-            url = $.trim(url + '');
+            url = $.trim(url + "");
 
             // For now a valid URL should start with a forward slash
-            return isRegex || url.indexOf('/') === 0;
+            return isRegex || url.indexOf("/") === 0;
+
+        },
+
+        propertiesToObject: function (array) {
+
+            var result = {};
+
+            angular.forEach(array, function (p) {
+                result[p.alias] = p.value === undefined ? null : p.value;
+            });
+
+            return result;
 
         }
 
     };
 
-    service.getRootNodes = function() {
-        return $http.get('/umbraco/backoffice/api/Redirects/GetRootNodes');
+    service.getRootNodes = function () {
+        return $http.get("/umbraco/backoffice/Skybrud/Redirects/GetRootNodes");
     };
 
     return service;
