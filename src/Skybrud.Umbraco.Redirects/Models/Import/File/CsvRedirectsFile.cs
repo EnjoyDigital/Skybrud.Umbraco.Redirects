@@ -4,6 +4,7 @@ using System.Linq;
 using Skybrud.Essentials.Time;
 using Skybrud.Umbraco.Redirects.Extensions;
 using Skybrud.Umbraco.Redirects.Import.Csv;
+using Skybrud.Umbraco.Redirects.Models.Database;
 using Skybrud.Umbraco.Redirects.Models.Options;
 using Umbraco.Web;
 
@@ -78,34 +79,34 @@ namespace Skybrud.Umbraco.Redirects.Models.Import.File
         /// <returns></returns>
         private RedirectItem Parse(CsvRow row)
         {
-            var redirectOptions = new AddRedirectOptions();
+            var redirectItemRow = new RedirectItemDto
+            {
+                Id = 0,
+                IsPermanent = true,
+                IsRegex = false,
+                ForwardQueryString = false,
+                QueryString = string.Empty,
+                Created = DateTime.Now,
+                Updated = DateTime.Now
+            };
 
-            redirectOptions.RootNodeId = 0;
-            redirectOptions.IsPermanent = true;
-            redirectOptions.IsRegex = false;
-            redirectOptions.ForwardQueryString = true;
-
-            var sourceUrlRaw = row.Cells[0] == null ? null : row.Cells[0].Value.Replace("\"",string.Empty).Trim();
-
-            var sourceUrl = sourceUrlRaw.ToUri();
+            var sourceUrl = row.Cells[0]?.Value.Replace("\"", string.Empty).Trim().ToUri();
 
             if (sourceUrl != null)
             {
-                //var lastSlash = sourceUrl.AbsolutePath.LastIndexOf('/');
-                //var sourceUrlNoTrailingSlash = (lastSlash > 0) ? sourceUrl.AbsolutePath.Substring(0, lastSlash) : sourceUrl.AbsolutePath;
+                var lastSlash = sourceUrl.AbsolutePath.LastIndexOf('/');
+                var sourceUrlNoTrailingSlash = (lastSlash > 0) ? sourceUrl.AbsolutePath.Substring(0, lastSlash) : sourceUrl.AbsolutePath;
 
-                redirectOptions.OriginalUrl = sourceUrl.AbsolutePath;
+                redirectItemRow.Url = sourceUrlNoTrailingSlash;
 
-                //redirectOptions.QueryString = sourceUrl.Query.TrimStart('?');
+                if (!string.IsNullOrEmpty(sourceUrl.Query.TrimStart('?')))
+                {
+                    redirectItemRow.ForwardQueryString = true;
+                    redirectItemRow.QueryString = sourceUrl.Query.TrimStart('?');
+                }
             }
 
-            var destinationUrlRaw = row.Cells[1] == null ? null : row.Cells[1].Value.Replace("\"", string.Empty).Trim();
-
-            var destinationUrl = destinationUrlRaw.ToUri();
-
-            RedirectDestinationType linkMode;
-            var linkModeRaw = row.Cells[2].Value == null ? RedirectDestinationType.Url.ToString() : row.Cells[2].Value.Replace("\"", string.Empty).Trim();
-            Enum.TryParse(linkModeRaw, out linkMode);
+            var destinationUrl = row.Cells[1]?.Value.Replace("\"", string.Empty).Trim().ToUri();
 
             if (destinationUrl != null)
             {
@@ -116,15 +117,21 @@ namespace Skybrud.Umbraco.Redirects.Models.Import.File
 
                 if (destinationUrlContent != null)
                 {
-                    redirectOptions.Destination = new RedirectDestination(destinationUrlContent.Id, Guid.Empty, destinationUrlContent.Url, linkMode);
+                    redirectItemRow.DestinationType = RedirectDestinationType.Content.ToString().ToLower();
+                    redirectItemRow.DestinationId = destinationUrlContent.Id;
+                    redirectItemRow.DestinationUrl = destinationUrlContent.Url;
                 }
                 else
                 {
-                    redirectOptions.Destination = new RedirectDestination(0, Guid.Empty, destinationUrl.AbsolutePath, linkMode);
-                }
-            }     
+                    var linkModeRaw = row.Cells[2].Value == null ? RedirectDestinationType.Url.ToString() : row.Cells[2].Value.Replace("\"", string.Empty).Trim();
+                    Enum.TryParse(linkModeRaw, out RedirectDestinationType linkMode);
 
-            var redirectItem = new RedirectItem(redirectOptions);
+                    redirectItemRow.DestinationType = linkMode.ToString().ToLower();
+                    redirectItemRow.DestinationUrl = destinationUrl.AbsolutePath;
+                }
+            }
+
+            var redirectItem = new RedirectItem(redirectItemRow);
 
             return redirectItem;
         }

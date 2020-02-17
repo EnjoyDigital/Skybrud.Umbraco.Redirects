@@ -1,58 +1,49 @@
-﻿<div class="SkybrudUmbracoRedirects ImportDialog umb-overlay umb-overlay-right" ng-controller="SkybrudUmbracoRedirects.ImportDialog.Controller">
+﻿<div class="SkybrudUmbracoRedirects ImportDialog umb-overlay umb-overlay-right" ng-controller="SkybrudUmbracoRedirects.ImportDialog.Controller as vm">
+    <umb-editor-view>
+        <umb-editor-header name="model.title"
+                           name-locked="true"
+                           hide-alias="true"
+                           hide-icon="true"
+                           hide-description="true">
+        </umb-editor-header>
+        <umb-editor-container>
+            <umb-box>
+                <umb-box-content>
+                    <div>Upload a file to import redirects into the site. File must be .CSV format.</div>
+                    <div class="umb-panel-group__details-status-actions ng-scope" ng-hide="vm.processing || vm.processed">
+                        <div class="input-group">
+                            <label class="input-group-btn">
+                                <span class="btn btn-info" style="margin-bottom: 10px; text-align: center;">
+                                    Select .csv <input type="file" accept=".csv" umb-file-upload ngf-multiple="false" class="ng-scope" style="display: none;">
+                                </span>
+                            </label>
+                            <input type="text" id="fileName" class="form-control" readonly style="text-align: center; width: 300px;" value="{{vm.fileName}}">
+                        </div>
+                        <input ng-if="vm.fileName" type="submit" ng-click="vm.upload()" class="btn btn-success" value="Upload file" style="text-align: center; width: 200px;">
+                    </div>
+                    <div class="umb-panel-group__details-status-actions ng-scope" ng-show="vm.processing">
+                        <div class="clearfix ng-scope">
+                            <div class="alert alert-info">Processing file<strong> {{vm.fileName}} </strong></div>
+                        </div>
+                        <umb-load-indicator></umb-load-indicator>
+                    </div>
+                    <div class="umb-panel-group__details-status-actions ng-scope" ng-show="vm.processed">
+                        <div class="clearfix ng-scope">
+                            <div ng-show="vm.success" class="alert alert-success"><b>Success - </b>{{vm.success}}</div>
+                            <div ng-show="vm.error" class="alert alert-error"><b>Error processing file {{vm.fileName}} - </b>{{vm.error}}</div>
+                            <div class="btn-group">
+                                <input ng-preventdefault ng-click="vm.close()" class="btn btn-info" value="Close" style="width: 200px;">
+                            </div>
+                        </div>
+                    </div>
+                </umb-box-content>
+            </umb-box>
+        </umb-editor-container>
 
-    <div class="umb-overlay-header">
-        <h4 class="umb-overlay__title">
-            <localize key="redirects_importRedirects">Import redirects</localize>
-        </h4>
-        <p class="umb-overlay__subtitle">
-            <localize key="redirects_addNewRedirectSubTitle">Import redirects from CSV or Excel.</localize>
-        </p>
-    </div>
-
-    <div class="umb-overlay-container">
-
-        <div class="redirects-basic-options">
-            <label class="sky-option">
-                <strong>
-                    <localize key="redirects_selectFile">File</localize>
-                </strong>
-
-                <umb-single-file-upload rebuild="rebuildInput"></umb-single-file-upload>
-
-                <div ng-show="invalidFileFormat" class="alert alert-error property-error">The uploaded file must be in <b>CSV</b> or Excel format.</div>
-                <!--<div class="btn-group">
-                    <input type="submit" ng-click="upload()" class="btn btn-success" value="Upload file" />
-                </div>-->
-                <div ng-show="noFile" class="alert alert-error property-error">A CSV file must be selected.</div>
-            </label>
-        </div>
-
-        <!--<div class="umb-dialog-body form-horizontal">
-            <div class="umb-pane" ng-hide="processing || processed">
-                <p>
-                    Upload a metadata <b>CSV</b> file
-                </p>
-
-            </div>
-            <div class="umb-pane" ng-show="processing">
-                <div class="alert alert-info">Processing file {{fileName}}</div>
-                <umb-load-indicator></umb-load-indicator>
-            </div>
-            <div class="umb-pane" ng-show="processed">
-                <div ng-show="success" class="alert alert-success"><b>Success -</b>{{success}}</div>
-                <div ng-show="error" class="alert alert-error"><b>Error processing file {{fileName}} - </b>{{error}}</div>
-                <a ng-preventdefault href="" ng-click="back()">Back to upload</a>
-            </div>
-        </div>-->
-    </div>
-
-    <div class="umb-overlay-drawer">
-        <a href="#" prevent-default ng-click="close()" class="btn btn-default">
-            <localize key="redirects_cancel">Cancel</localize>
-        </a>
-        <a href="#" prevent-default ng-click="upload()" class="btn btn-success btn-loader" ng-class="{loading: loading}">
-            <localize key="redirects_import">Import</localize>
-            <div class="umb-button__progress -white"></div>
-        </a>
-    </div>
+        <umb-editor-footer>
+            <umb-editor-footer-content-right>
+                <umb-button ng-if="model.infiniteMode" action="vm.close()" button-style="link" label="{{model.closeButtonLabel || 'Close'}}" type="button"></umb-button>
+            </umb-editor-footer-content-right>
+        </umb-editor-footer>
+    </umb-editor-view>
 </div>

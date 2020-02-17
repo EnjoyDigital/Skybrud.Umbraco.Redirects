@@ -22,6 +22,7 @@ namespace Skybrud.Umbraco.Redirects.Components
             _keyValueService = keyValueService;
             _logger = logger;
         }
+
         public void Initialize()
         {
             var plan = new MigrationPlan("Skybrud.Umbraco.Redirects");
@@ -30,6 +31,13 @@ namespace Skybrud.Umbraco.Redirects.Components
 
             var upgrader = new Upgrader(plan);
             upgrader.Execute(_scopeProvider, _migrationBuilder, _keyValueService, _logger);
+
+            var edSkybrudPlan = new MigrationPlan("EdSkybrud.Umbraco.Redirects");
+            edSkybrudPlan.From(string.Empty)
+                .To<CreateImportTable>("1.0.0");
+
+            var importUpgrader = new Upgrader(edSkybrudPlan);
+            importUpgrader.Execute(_scopeProvider, _migrationBuilder, _keyValueService, _logger);
         }
 
         public void Terminate()

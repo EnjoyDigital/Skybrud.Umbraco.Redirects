@@ -10,6 +10,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using Umbraco.Web.Mvc;
 using Umbraco.Web.WebApi;
 
 namespace Skybrud.Umbraco.Redirects.Controllers.Api

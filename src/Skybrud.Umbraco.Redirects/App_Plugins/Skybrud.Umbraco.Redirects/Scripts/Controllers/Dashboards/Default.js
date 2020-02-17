@@ -64,11 +64,8 @@
     };
 
     $scope.import = function () {
-        skybrudRedirectsService.import({
-            callback: function () {
-
-                $scope.updateList(1);
-            }
+        skybrudRedirectsService.import(function () {
+            $scope.updateList(1);
         });
     };
     

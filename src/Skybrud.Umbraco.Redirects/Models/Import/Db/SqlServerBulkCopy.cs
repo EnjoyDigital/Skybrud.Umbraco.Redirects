@@ -38,8 +38,8 @@ namespace Skybrud.Umbraco.Redirects.Models.Import.Db
                 .ToDataTable();
 
             //Slight hack
-            dataTable.Columns["UniqueId"].ColumnName = "RedirectUniqueId";
-            dataTable.Columns["Id"].ColumnName = "RedirectId";
+            //dataTable.Columns["Key"].ColumnName = "RedirectUniqueId";
+            //dataTable.Columns["Id"].ColumnName = "RedirectId";
 
             using (var connection = new SqlConnection(ConfigurationManager.ConnectionStrings["umbracoDbDSN"].ConnectionString))
             {
@@ -83,13 +83,13 @@ namespace Skybrud.Umbraco.Redirects.Models.Import.Db
                 cmd.CommandText = @"
                 MERGE INTO SkybrudRedirects WITH (HOLDLOCK) AS target
                 USING SkybrudRedirectsImport AS source
-                    ON target.LinkUrl = source.LinkUrl
+                    ON target.DestinationUrl = source.DestinationUrl
                     AND target.Url = source.Url
                     AND target.QueryString = source.QueryString
                 WHEN MATCHED THEN UPDATE SET 
                     target.QueryString = source.QueryString,
-                    target.LinkMode = source.LinkMode,
-                    target.LinkId = source.LinkId,
+                    target.DestinationType = source.DestinationType,
+                    target.DestinationId = source.DestinationId,
                     target.Created = source.Created,
                     target.Updated = source.Updated,
                     target.IsPermanent = source.IsPermanent,
@@ -101,12 +101,13 @@ namespace Skybrud.Umbraco.Redirects.Models.Import.Db
                 INSERT(
                     Url,
                     QueryString,
-                    RedirectUniqueId,
-                    RootNodeId,
-                    LinkMode,
-                    LinkId,
-                    LinkUrl,
-                    LinkName,
+                    [Key],
+                    RootId,
+                    RootKey,
+                    DestinationType,
+                    DestinationId,
+                    DestinationUrl,
+                    DestinationKey,
                     Created,
                     Updated,
                     IsPermanent,
@@ -115,12 +116,13 @@ namespace Skybrud.Umbraco.Redirects.Models.Import.Db
                 VALUES(
                     source.Url, 
                     source.QueryString,
-                    source.RedirectUniqueId,
-                    source.RootNodeId,
-                    source.LinkMode,
-                    source.LinkId,
-                    source.LinkUrl,
-                    source.LinkName,
+                    source.[Key],
+                    source.RootId,
+                    source.RootKey,
+                    source.DestinationType,
+                    source.DestinationId,
+                    source.DestinationUrl,
+                    source.DestinationKey,
                     source.Created,
                     source.Updated,
                     source.IsPermanent,

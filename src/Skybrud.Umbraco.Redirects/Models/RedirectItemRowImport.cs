@@ -1,8 +1,8 @@
 ﻿using NPoco;
-using Umbraco.Core.Persistence;
 using Umbraco.Core.Persistence.DatabaseAnnotations;
 
-namespace Skybrud.Umbraco.Redirects.Models {
+namespace Skybrud.Umbraco.Redirects.Models
+{
 
     [TableName(TableName)]
     [PrimaryKey(PrimaryKey, AutoIncrement = true)]
@@ -13,7 +13,7 @@ namespace Skybrud.Umbraco.Redirects.Models {
 
         public const string TableName = "SkybrudRedirectsImport";
 
-        public const string PrimaryKey = "RedirectId";
+        public const string PrimaryKey = "Id";
 
         #endregion
 
@@ -23,11 +23,11 @@ namespace Skybrud.Umbraco.Redirects.Models {
         [PrimaryKeyColumn(AutoIncrement = true)]
         public int Id { get; set; }
 
-        [Column("RedirectUniqueId")]
-        public string UniqueId { get; set; }
+        [Column("Key")]
+        public string Key { get; set; }
 
-        [Column("RootNodeId")]
-        public int RootNodeId { get; set; }
+        [Column("RootId")]
+        public int RootId { get; set; }
 
         [Column("Url")]
         public string Url { get; set; }
@@ -36,18 +36,17 @@ namespace Skybrud.Umbraco.Redirects.Models {
         [NullSetting(NullSetting = NullSettings.Null)]
         public string QueryString { get; set; }
 
-        [Column("LinkMode")]
-        public string LinkMode { get; set; }
+        [Column("DestinationType")]
+        public string DestinationType { get; set; }
 
-        [Column("LinkId")]
-        public int LinkId { get; set; }
+        [Column("DestinationId")]
+        public int DestinationId { get; set; }
 
-        [Column("LinkUrl")]
-        public string LinkUrl { get; set; }
+        [Column("DestinationKey")]
+        public string DestinationKey { get; set; }
 
-        [Column("LinkName")]
-        [NullSetting(NullSetting = NullSettings.Null)]
-        public string LinkName { get; set; }
+        [Column("DestinationUrl")]
+        public string DestinationUrl { get; set; }
 
         [Column("Created")]
         public long Created { get; set; }

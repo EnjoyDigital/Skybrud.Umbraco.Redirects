@@ -132,22 +132,19 @@
             });
         },
 
-        import: function (options) {
-
-            if (!options) options = {};
-            if (typeof (options) == 'function') options = { callback: options };
-
-            var d = editorService.open({
-                template: '/App_Plugins/Skybrud.Umbraco.Redirects/Views/Dialogs/Import.html',
+        import: function (callback) {
+            editorService.open({
+                view: '/App_Plugins/Skybrud.Umbraco.Redirects/Views/Dialogs/Import.html',
+                size: 'small',
                 show: true,
-                options: options,
-                callback: function (value) {
-                    if (options.callback) options.callback(value);
+                close: function () {
+                    if (callback) callback();
+                    editorService.close();
                 }
             });
 
             // Make the dialog 20px wider than default so it can be seen bhind the linkpicker dialog
-            d.element[0].style = 'display: flex; width: 460px !important; margin-left: -460px';
+            //d.element[0].style = 'display: flex; width: 460px !important; margin-left: -460px';
         },
 
         //uploadImportFile: function (file, options) {
