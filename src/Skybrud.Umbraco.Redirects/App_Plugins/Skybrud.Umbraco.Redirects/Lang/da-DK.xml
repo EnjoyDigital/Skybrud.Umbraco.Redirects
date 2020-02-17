@@ -87,6 +87,7 @@
     <key alias="errorUnknownLinkMode">Den angivne linktype er ikke gyldig.</key>
 
     <key alias="pageNoRedirects">Din side er endnu ikke oprettet. Du skal gemme eller publicere siden for, at kunne tilføje redirects.</key>
-    
+
+    <key alias="import">Import</key>
   </area>
 </language>

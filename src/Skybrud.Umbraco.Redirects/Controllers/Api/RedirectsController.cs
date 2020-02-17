@@ -23,7 +23,7 @@ namespace Skybrud.Umbraco.Redirects.Controllers.Api {
     /// </summary>
     [JsonOnlyConfiguration]
     [PluginController("Skybrud")]
-    public class RedirectsController : UmbracoAuthorizedApiController {
+    public partial class RedirectsController : UmbracoAuthorizedApiController {
 
         private CultureInfo _culture;
         private readonly IRedirectsService _redirects;

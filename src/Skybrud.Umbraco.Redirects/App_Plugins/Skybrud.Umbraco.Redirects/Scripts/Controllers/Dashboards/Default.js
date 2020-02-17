@@ -62,6 +62,15 @@
             $scope.updateList();
         });
     };
+
+    $scope.import = function () {
+        skybrudRedirectsService.import({
+            callback: function () {
+
+                $scope.updateList(1);
+            }
+        });
+    };
     
     // Initial pagination options
     $scope.pagination = {

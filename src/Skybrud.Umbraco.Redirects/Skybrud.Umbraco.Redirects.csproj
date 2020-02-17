@@ -20,9 +20,11 @@
     <PackageIconUrl>http://www.skybrud.dk/img/5431sk/icon/favicon.ico</PackageIconUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/skybrud/Skybrud.Umbraco.Redirects</RepositoryUrl>
+    <AssemblyName>EdSkybrud.Umbraco.Redirects</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Web" />
     <PackageReference Include="Skybrud.Essentials" Version="1.1.18" />
     <PackageReference Include="UmbracoCms.Core" Version="8.0.0">
@@ -39,6 +41,8 @@
     <Content Include="App_Plugins\Skybrud.Umbraco.Redirects\**\*.html" />
     <Content Include="App_Plugins\Skybrud.Umbraco.Redirects\**\*.js" />
     <Content Include="App_Plugins\Skybrud.Umbraco.Redirects\Lang\*.xml" />
+    <None Remove="App_Plugins\Skybrud.Umbraco.Redirects\Scripts\Controllers\Dialogs\ImportDialog.js" />
+    <None Remove="App_Plugins\Skybrud.Umbraco.Redirects\Views\Dialogs\Import.html" />
     <None Remove="Web.config.install.xdt" />
     <None Remove="Web.config.uninstall.xdt" />
     <Content Include="App_Plugins\Skybrud.Umbraco.Redirects\package.manifest" />

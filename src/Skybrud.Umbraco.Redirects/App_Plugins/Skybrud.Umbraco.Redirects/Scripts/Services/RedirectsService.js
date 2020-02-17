@@ -1,4 +1,4 @@
-﻿angular.module('umbraco.services').factory('skybrudRedirectsService', function ($http, editorService, notificationsService) {
+﻿angular.module('umbraco.services').factory('skybrudRedirectsService', function ($http, editorService, notificationsService, editorService) {
 
     var service = {
 
@@ -131,6 +131,35 @@
                 notificationsService.error("Deleting redirect failed", res && res.data && res.data.meta ? res.data.meta.error : "The server was unable to delete your redirect.");
             });
         },
+
+        import: function (options) {
+
+            if (!options) options = {};
+            if (typeof (options) == 'function') options = { callback: options };
+
+            var d = editorService.open({
+                template: '/App_Plugins/Skybrud.Umbraco.Redirects/Views/Dialogs/Import.html',
+                show: true,
+                options: options,
+                callback: function (value) {
+                    if (options.callback) options.callback(value);
+                }
+            });
+
+            // Make the dialog 20px wider than default so it can be seen bhind the linkpicker dialog
+            d.element[0].style = 'display: flex; width: 460px !important; margin-left: -460px';
+        },
+
+        //uploadImportFile: function (file, options) {
+        //    if (!options) options = {};
+        //    if (typeof (options) == 'function') options = { callback: options };
+
+        //    var request = {
+        //        file: file
+        //    };
+
+        //},
+
 
         isValidUrl: function (url, isRegex) {
 
