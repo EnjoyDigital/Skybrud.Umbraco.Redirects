@@ -54,9 +54,9 @@ namespace Skybrud.Umbraco.Redirects.Routing {
             HttpApplication application = (HttpApplication) sender;
 
             // Ignore if not a 404 response
-            if (application.Response.StatusCode != 404) return;
-
-            var request = application.Request;
+            //if (application.Response.StatusCode != 404) return;
+            //
+            //var request = application.Request;
             
             // Get the Umbraco domain of the current request
             Domain domain = GetUmbracoDomain(application.Request);
